@@ -6,7 +6,7 @@ const Main = () => {
     return (
         <div>
             <div>
-                    <h1>Welcome to Chore Tracker</h1>
+                <h1>Welcome to Chore Tracker</h1>
             </div>
             <div>
                 <div>

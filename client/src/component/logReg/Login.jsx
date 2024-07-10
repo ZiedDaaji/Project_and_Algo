@@ -24,7 +24,8 @@ const Login = () => {
             axios.post('http://localhost:8000/api/Login', userLogin, {withCredentials:true})
             .then((res) => {
                 console.log(res.data);
-                Cookies.set('USER', (res.data.user.firstName + " " + res.data.user.lastName), {expiresIn: '2h'});
+                Cookies.set('FN', (res.data.user.firstName), {expiresIn: '2h'});
+                Cookies.set('LN', (res.data.user.lastName), {expiresIn: '2h'});
                 nav('/dashboard')
             })
             
@@ -34,7 +35,7 @@ const Login = () => {
             })
             
         }
-        const user = Cookies.get('USER');
+        
         
     return (
         <form onSubmit={ loginHandler } className='login'>
