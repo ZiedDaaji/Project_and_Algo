@@ -23,7 +23,9 @@ const AddJob = () => {
   const [location, setLocation] = useState("");
   const postedBy = `${user}`;
   const date = `${toDay}`
-  const [errors, setErrors] = useState([]);
+  const [error1, setError1] = useState("");
+  const [error2, setError2] = useState("");
+  const [error3, setError3] = useState("");
 
 
     useEffect(() =>{
@@ -68,42 +70,53 @@ const submitHandler = (e) => {
       nav("/dashboard");
   })
   .catch(err=>{
-      const errorResponse = err.response.data.errors;
-      const errorArr = [];
-      for (const key of Object.keys(errorResponse)) {
-          errorArr.push(errorResponse[key].message)
-      }
-      setErrors(errorArr);
+    console.log(err.response.data.errors)
+    if (err.response.data.errors.title !== undefined) {
+      setError1(err.response.data.errors.title.message);
+    }else{
+      setError1("");
+    }
+    if (err.response.data.errors.description !== undefined) {
+      setError2(err.response.data.errors.description.message);
+    }else{
+      setError2("");
+    }
+    if (err.response.data.errors.location !== undefined) {
+      setError3(err.response.data.errors.location.message);
+    }else{
+      setError3("");
+    }
   })
-  
 }
-
   return (
-    <form onSubmit={ submitHandler }>
-      <div>
-        <div>Add a Job</div>
-        <div>
+    <form onSubmit={ submitHandler } >
+      <div className='addNavBar'>
+        <h4>Add a Job</h4>
+        <div className='subNavBar'>
           <div><Link to={`/dashboard`}>Back</Link></div>
           <div><Link onClick={ logOut }>Logout</Link></div>
         </div>
       </div>
-      <div className='autorisation'>
-                <div className='autorisation-email'>
-                    <label>Title </label>
-                    <input className='log-input' type='text' onChange={(e) => {setTitle(e.target.value)}} value={title} name='email' />
-                </div>
-                <div className='autorisation-password'>
-                    <label>Description</label>
-                    <input className='log-input' type='text' onChange={(e) => {setDescription(e.target.value)}} value={description} name='password' />
-                </div>
-                <div className='autorisation-password'>
-                    <label>Location</label>
-                    <input className='log-input' type='text' onChange={(e) => {setLocation(e.target.value)}} value={location} name='password' />
-                </div>
-                <div className='autorisation-submit'>
-                    <button className='login-button' type='submit'>Submit</button>
-                </div>
-            </div>
+      <div className='addBody'>
+        <div className='titleAdd'>
+          <label className='label'>Title </label>
+          <input className='title-input' type='text' onChange={(e) => {setTitle(e.target.value)}} value={title} name='title' />
+          <div className='errors'>{error1}</div>
+        </div>
+        <div className='descriptionAdd'>
+          <label className='label'>Description</label>
+          <input className='description-input' type='text' onChange={(e) => {setDescription(e.target.value)}} value={description} name='description' />
+          <div className='errors'>{error2}</div>
+        </div>
+        <div className='locationAdd'>
+          <label className='label'>Location</label>
+          <input className='location-input' type='text-area' onChange={(e) => {setLocation(e.target.value)}} value={location} name='location' />
+          <div className='errors'>{error3}</div>
+        </div>
+        <div className='submit'>
+            <button className='login-button' type='submit'>Submit</button>
+        </div>
+      </div>
     </form>
     
   )

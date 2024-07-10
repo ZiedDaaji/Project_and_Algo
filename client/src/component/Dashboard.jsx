@@ -11,9 +11,8 @@ const Dashboard = () => {
     const userLN = Cookies.get('LN');
     const user = `${userFN + " " + userLN}`
     const [jobs, setJobs] = useState([]);
-
-    const [actionsList, setActionsList] = useState([]);
-
+    const [myJobs, setMyJobs] = useState([]);
+    const [storedMyJobs, setStoredMyJobs] = useState([]);
 
 
     useEffect(() =>{
@@ -41,31 +40,13 @@ const Dashboard = () => {
         })
     }, []);
 
-    /*function actions(props) {
-        
-        if (user === props) {
-            const action1 = <div>
-                            <Link to={`/view/${props}`}>View</Link>
-                            <Link to={`/dashboard`}>add</Link>
-                            <Link to={`/edit/${props}`}>edit</Link>
-                            <Link onClick={ () => deleteJob(props)}>cancel</Link>
-                        </div>;
-
-            
-            
-            setActionsList(action1);
-            
-        }else
-            setActionsList("action2");
-            }*/
-
-
     const logOut = () => {
         axios.post('http://localhost:8000/api/logout', {}, {withCredentials: true})
         .then((res) => {
             console.log(res);
             Cookies.remove('FN');
             Cookies.remove('LN');
+            Cookies.remove('myJobs');
             nav("/");
         })
         .catch((err) => {
@@ -89,57 +70,108 @@ const Dashboard = () => {
 
             })
         };
-    
 
+        function addList(props) {
+            myJobs.push(props);
+            jobs.pop(props);
+            let myJobsString = JSON.stringify(myJobs);
+            console.log(myJobsString)
+            Cookies.set('myJobs', myJobsString);
+        }
+        function removeJob(props) {
+            myJobs.pop(props._id);
+            deleteJob(props._id);
+            let myJobsString = JSON.stringify(myJobs);
+            console.log(myJobsString)
+            Cookies.set('myJobs', myJobsString);
+        }
+
+        
 
     return (
         <form>
-            <div>
-                <div>
+            <div className='navBar'>
+                <div className='subNavBar'>
                     <div>Welcome {userFN}!</div>
-                    <div className='navigationFont'>
+                    <div >
                         <Link onClick={ logOut }>Logout</Link>
                     </div>
                 </div>
                 
-                <div className='navigationFont'>
-                <Link to={`/addJob`}>Add A Job</Link>
+                <div className='addLink'>
+                    <Link to={`/addJob`}>Add A Job</Link>
                 </div>
             </div>
-            <div>
-            <table className='my-table2'>
-                <thead>
-                    <tr>
-                        <th>Job</th>
-                        <th>Location</th>
-                        <th>Posted by</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody >
-                        {jobs.map( job => {
-                            
-                    return (
-                            <tr key={job._id} >
-                                <td>{job.title}</td>
-                                <td>{job.location}</td>
-                                <td>{job.postedBy}</td>
-                                <td>
-                                    <div>
-                                        <Link to={`/view/${job._id}`}>View</Link>
-                                        <Link to={`/dashboard`}>add</Link>
-                                        <Link to={`/edit/${job._id}`}>edit</Link>
-                                        <Link onClick={ () => deleteJob(job._id)}>cancel</Link>
-                                    </div>
-                                </td>
+            <div className='DashboardBody'>
+                <div className='JobLitst'>
+                    <table className='Table1'>
+                        <thead className='thead'>
+                            <tr>
+                                <th>Job</th>
+                                <th>Location</th>
+                                <th>Action</th>
                             </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody >
+                            {jobs.map(job => {
+                                    if (user === job.postedBy) {
+                                        return (
+                                            <tr key={job._id} >
+                                                <td>{job.title}</td>
+                                                <td>{job.location}</td>
+                                                <td>
+                                                    <div className='actionsList'>
+                                                        <div className='actionsList1'>
+                                                            <Link to={`/view/${job._id}`}>View</Link>
+                                                            <Link onClick={ () => addList(job)}>add</Link>
+                                                        </div>
+                                                        <div className='actionsList2'>
+                                                            <Link to={`/edit/${job._id}`}>edit</Link>
+                                                            <Link onClick={ () => deleteJob(job._id)}>cancel</Link>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    } else {
+                                        return (
+                                            <tr key={job._id} >
+                                                <td>{job.title}</td>
+                                                <td>{job.location}</td>
+                                                <td>
+                                                    <div className='actionsList'>
+                                                        <div className='actionsList1'>
+                                                            <Link to={`/view/${job._id}`}>View</Link>
+                                                            <Link onClick={ () => addList(job)}>add</Link>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    }
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div className='MyLitst'>
+                    <div className='DivTitle'>My List</div>
+                    <div className='myListBody'>                
+                        {storedMyJobs.map(job => {
+                            return (
+                                <div className='myJobLine'  key={job._id}>
+                                    <div>{job.description}</div>
+                                    <div className='actionsList2'>
+                                        <Link to={`/view/${job._id}`}>View</Link>
+                                        <Link onClick={ () => removeJob(job)}>Done</Link>
+                                    </div>
+                                </div>
+                                );
+                            })
+                        }
+                    </div>    
+                </div>
             </div>
-
-
         </form>
     )
 }

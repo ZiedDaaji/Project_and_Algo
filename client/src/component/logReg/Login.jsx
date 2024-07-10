@@ -39,25 +39,25 @@ const Login = () => {
         
     return (
         <form onSubmit={ loginHandler } className='login'>
-            <div className='ajouterMsg'>
+            <div className='login-title'>
                 Login
             </div>
-            <div className='autorisation'>
-                <div className='autorisation-email'>
+            
+                <div className='userDetails'>
                     <label>Email </label>
-                    <input className='log-input' type='text' onChange={changeHandler} value={userLogin.email} name='email' />
+                    <input className='logInput' type='text' onChange={changeHandler} value={userLogin.email} name='email' />
                 </div>
-                <div className='autorisation-password'>
+                <div className='userDetails'>
                     <label>Password</label>
-                    <input className='log-input' type='password' onChange={changeHandler} value={userLogin.password} name='password' />
+                    <input className='logInput' type='password' onChange={changeHandler} value={userLogin.password} name='password' />
                 </div>
-                <div className='autorisation-submit'>
-                    <button className='login-button' type='submit'>Se connecter</button>
+                <div className='ButtonDiv'>
+                    <button className='login-button' type='submit'>Login</button>
                 </div>
-            </div>
+            
 
             <div>
-                <div className='errorRes'>
+                <div className='errors'>
                     {error}
                 </div>
             </div>

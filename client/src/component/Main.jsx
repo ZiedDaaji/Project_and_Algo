@@ -4,11 +4,11 @@ import Login from './logReg/Login';
 
 const Main = () => {
     return (
-        <div>
-            <div>
+        <div className='main'>
+            <div className='mainHeader'>
                 <h1>Welcome to Chore Tracker</h1>
             </div>
-            <div>
+            <div className='mainBody'>
                 <div>
                     <Register/>
                 </div>
