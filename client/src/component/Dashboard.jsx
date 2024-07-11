@@ -115,15 +115,19 @@ const Dashboard = () => {
             let newMyJobs = Cookies.get('myJobs');
             myList = (JSON.parse(newMyJobs) || []);
             //
-            let index2 = allJobsList.findIndex(one => one._id === props._id);
-            console.log(index2)
-            allJobsList.splice(index2, 1);
-            console.log(allJobsList)
-            let jobsString = JSON.stringify(allJobsList);
-            Cookies.set('allJobs', jobsString );
-            let newAllJobs = Cookies.get('allJobs');
-            setAllJobsList((JSON.parse(newAllJobs) || []));
         }
+        function cancel(props) {
+            deleteJob(props._id);
+            let index = allJobsList.findIndex(one => one._id === props._id);
+            console.log(index)
+            allJobsList.splice(index, 1);
+            let allJobsString = JSON.stringify(allJobsList);
+            Cookies.set('allJobs', allJobsString);
+            let newAllJobs = Cookies.get('allJobs');
+            allJobsList = (JSON.parse(newAllJobs) || []);
+            //
+        }
+        
 
         console.log(newAllJobs)
     console.log(allJobsList)
@@ -167,7 +171,7 @@ const Dashboard = () => {
                                                         </div>
                                                         <div className='actionsList2'>
                                                             <Link to={`/edit/${job._id}`}>edit</Link>
-                                                            <Link onClick={ () => deleteJob(job._id)}>cancel</Link>
+                                                            <Link onClick={ () => cancel(job)}>cancel</Link>
                                                         </div>
                                                     </div>
                                                 </td>

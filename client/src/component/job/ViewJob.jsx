@@ -16,8 +16,10 @@ const ViewJob = () => {
   const [date, setDate] = useState("");
   const nav = useNavigate();
   const {id} = useParams();
-  let newList = []
-  let [allJobsList, setAllJobsList] = useState([]);
+  let newList = [];
+  let cookieJobList = Cookies.get('allJobs');
+  let allJobsList = (JSON.parse(cookieJobList) || []);
+  console.log(allJobsList)
 
     useEffect(() =>{
       axios.get('http://localhost:8000/api/AllUsers', {withCredentials: true})
@@ -66,10 +68,18 @@ const ViewJob = () => {
   function addList(props) {
         let cookieMyList = Cookies.get('myJobs');
         console.log(cookieMyList)
+        
         if (cookieMyList === undefined) {
           newList.push(props)
-          let allJobsString = JSON.stringify(newList);
-          Cookies.set('myJobs', allJobsString);
+          let allMyJobsString = JSON.stringify(newList);
+          Cookies.set('myJobs', allMyJobsString);
+          //
+          let index2 = allJobsList.findIndex(one => one._id === props._id);
+          console.log(index2)
+          allJobsList.splice(index2, 1);
+          let allJobsString = JSON.stringify(allJobsList);
+          Cookies.set('allJobs', allJobsString);
+          console.log(allJobsList)          
         }else{
           let parseCookieMyList = JSON.parse(cookieMyList) || [];
           parseCookieMyList.push(props);
@@ -77,17 +87,16 @@ const ViewJob = () => {
           let allMyJobsString = JSON.stringify(parseCookieMyList);
           Cookies.set('myJobs', allMyJobsString);
           //
-          /*newAllJobs = Cookies.get('allJobs');
-          setAllJobsList((JSON.parse(newAllJobs) || []))
-          let index = allJobsList.findIndex(one => one._id === props._id);
-          console.log(index)
-          allJobsList.splice(index, 1);
+          console.log(cookieJobList)
+          console.log(allJobsList)
+          let index2 = allJobsList.findIndex(one => one._id === props._id);
+          console.log(index2)
+          allJobsList.splice(index2, 1);
           let allJobsString = JSON.stringify(allJobsList);
           Cookies.set('allJobs', allJobsString);
-          let newAllJobs = Cookies.get('allJobs');
-          allJobsList = (JSON.parse(newAllJobs) || []);*/
+          console.log(allJobsList)
         }
-    
+        nav('/dashboard');
 }
 
 
@@ -107,7 +116,7 @@ const ViewJob = () => {
         </div>
       </div>
       <div className='addJob-Button'>
-        <Link onClick={ () => addList(job)} Link to={`/dashboard`} >Add To My Jobs</Link>
+        <Link to={`/dashboard`}onClick={ () => addList(job)} >Add To My Jobs</Link>
       </div>
       
     </form>
