@@ -5,14 +5,25 @@ import Cookies from 'js-cookie';
 
 
 const Dashboard = () => {
+
     const [allUsers, setAllUsers] = useState([]);
     const nav = useNavigate();
     const userFN = Cookies.get('FN');
     const userLN = Cookies.get('LN');
     const user = `${userFN + " " + userLN}`
     const [jobs, setJobs] = useState([]);
-    const [myJobs, setMyJobs] = useState([]);
-    const [storedMyJobs, setStoredMyJobs] = useState([]);
+    let myList = []
+    let cookieJobList = Cookies.get('allJobs');
+
+    let [newAllJobs,setNewAllJobs] = useState([]);
+    let [allJobsList, setAllJobsList] = useState([]);
+    
+    let newMyJobs = Cookies.get('myJobs');
+
+    if (newMyJobs !== undefined) {
+        myList = JSON.parse(newMyJobs) || [];
+        console.log(myList)
+    }
 
 
     useEffect(() =>{
@@ -32,7 +43,16 @@ const Dashboard = () => {
             console.log(res.data);
             setJobs(res.data);
             
-            
+            if (cookieJobList === undefined) {
+                let allJobsString = JSON.stringify(res.data);
+                Cookies.set('allJobs', allJobsString);
+                newAllJobs = Cookies.get('allJobs');
+                setAllJobsList((JSON.parse(newAllJobs) || []));
+            }else{
+                newAllJobs = Cookies.get('allJobs');
+                setAllJobsList((JSON.parse(newAllJobs) || []));
+            }
+
         })
         .catch((err) => {
             console.log(err);
@@ -47,12 +67,12 @@ const Dashboard = () => {
             Cookies.remove('FN');
             Cookies.remove('LN');
             Cookies.remove('myJobs');
+            Cookies.remove('allJobs');
             nav("/");
         })
         .catch((err) => {
             console.log(err); 
         })
-        
     }
 
     const deleteJob = (thisId) => {
@@ -67,26 +87,46 @@ const Dashboard = () => {
             .catch((err) => {
                 console.log(err);
                 console.log("failed2");
-
             })
         };
 
         function addList(props) {
-            myJobs.push(props);
-            jobs.pop(props);
-            let myJobsString = JSON.stringify(myJobs);
-            console.log(myJobsString)
+            myList.push(props);
+            let myJobsString = JSON.stringify(myList);
             Cookies.set('myJobs', myJobsString);
+            let newMyJobs = Cookies.get('myJobs');
+            myList = (JSON.parse(newMyJobs) || []);
+            //
+            let index = allJobsList.findIndex(one => one._id === props._id);
+            console.log(index)
+            allJobsList.splice(index, 1);
+            let allJobsString = JSON.stringify(allJobsList);
+            Cookies.set('allJobs', allJobsString);
+            let newAllJobs = Cookies.get('allJobs');
+            allJobsList = (JSON.parse(newAllJobs) || []);
         }
         function removeJob(props) {
-            myJobs.pop(props._id);
             deleteJob(props._id);
-            let myJobsString = JSON.stringify(myJobs);
-            console.log(myJobsString)
+            let index = myList.findIndex(one => one._id === props._id);
+            console.log(index)
+            myList.splice(index, 1);
+            let myJobsString = JSON.stringify(myList);
             Cookies.set('myJobs', myJobsString);
+            let newMyJobs = Cookies.get('myJobs');
+            myList = (JSON.parse(newMyJobs) || []);
+            //
+            let index2 = allJobsList.findIndex(one => one._id === props._id);
+            console.log(index2)
+            allJobsList.splice(index2, 1);
+            console.log(allJobsList)
+            let jobsString = JSON.stringify(allJobsList);
+            Cookies.set('allJobs', jobsString );
+            let newAllJobs = Cookies.get('allJobs');
+            setAllJobsList((JSON.parse(newAllJobs) || []));
         }
 
-        
+        console.log(newAllJobs)
+    console.log(allJobsList)
 
     return (
         <form>
@@ -113,7 +153,7 @@ const Dashboard = () => {
                             </tr>
                         </thead>
                         <tbody >
-                            {jobs.map(job => {
+                            {allJobsList.map(job => {
                                     if (user === job.postedBy) {
                                         return (
                                             <tr key={job._id} >
@@ -157,7 +197,7 @@ const Dashboard = () => {
                 <div className='MyLitst'>
                     <div className='DivTitle'>My List</div>
                     <div className='myListBody'>                
-                        {storedMyJobs.map(job => {
+                        {myList.map(job => {
                             return (
                                 <div className='myJobLine'  key={job._id}>
                                     <div>{job.description}</div>

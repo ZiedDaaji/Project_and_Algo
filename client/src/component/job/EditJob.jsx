@@ -35,7 +35,8 @@ const logOut = () => {
       console.log(res);
       Cookies.remove('FN');
       Cookies.remove('LN');
-      
+      Cookies.remove('myJobs');
+      Cookies.remove('allJobs');
       nav("/");
   })
   .catch((err) => {
@@ -113,7 +114,7 @@ const updateHandler = (e) => {
         </div>
         <div className='descriptionAdd'>
           <label className='label'>Description</label>
-          <input className='description-input' type='text' onChange={(e) => {setDescription(e.target.value)}} value={description} name='description' />
+          <textarea className='description-input' onChange={(e) => {setDescription(e.target.value)}} value={description} name='location'/>
           <div className='errors'>{error2}</div>
         </div>
         <div className='locationAdd'>

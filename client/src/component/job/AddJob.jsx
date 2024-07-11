@@ -27,6 +27,8 @@ const AddJob = () => {
   const [error2, setError2] = useState("");
   const [error3, setError3] = useState("");
 
+  
+  
 
     useEffect(() =>{
       axios.get('http://localhost:8000/api/AllUsers', {withCredentials: true})
@@ -45,12 +47,24 @@ const AddJob = () => {
         console.log(res);
         Cookies.remove('FN');
         Cookies.remove('LN');
+        Cookies.remove('myJobs');
+        Cookies.remove('allJobs');
         nav("/");
     })
     .catch((err) => {
         console.log(err); 
     })
     
+}
+
+function addList(props) {
+
+  let cookieJobList = Cookies.get('allJobs');
+  let parseCookieJobList = JSON.parse(cookieJobList) || [];
+  parseCookieJobList.push(props);
+  let allJobsString = JSON.stringify(parseCookieJobList);
+  Cookies.set('allJobs', allJobsString);
+
 }
 
 const submitHandler = (e) => {
@@ -64,6 +78,7 @@ const submitHandler = (e) => {
   })
   .then((res) => {
       console.log(res.data)
+      addList(res.data)
       setTitle("");
       setDescription("");
       setLocation("");
@@ -105,7 +120,7 @@ const submitHandler = (e) => {
         </div>
         <div className='descriptionAdd'>
           <label className='label'>Description</label>
-          <input className='description-input' type='text' onChange={(e) => {setDescription(e.target.value)}} value={description} name='description' />
+          <textarea className='description-input' onChange={(e) => {setDescription(e.target.value)}} value={description} name='location'/>
           <div className='errors'>{error2}</div>
         </div>
         <div className='locationAdd'>

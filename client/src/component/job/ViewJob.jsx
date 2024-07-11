@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import Dashboard from '../Dashboard';
+
 
 const ViewJob = () => {
 
   const [allUsers, setAllUsers] = useState([]);
+  const [job, setJob] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
@@ -15,6 +16,8 @@ const ViewJob = () => {
   const [date, setDate] = useState("");
   const nav = useNavigate();
   const {id} = useParams();
+  let newList = []
+  let [allJobsList, setAllJobsList] = useState([]);
 
     useEffect(() =>{
       axios.get('http://localhost:8000/api/AllUsers', {withCredentials: true})
@@ -31,6 +34,7 @@ const ViewJob = () => {
     axios.get("http://localhost:8000/api/Jobs/" + id)
     .then((res) => {
         console.log(res.data);
+        setJob(res.data);
         setTitle(res.data.title);
         setDescription(res.data.description);
         setLocation(res.data.location);
@@ -48,6 +52,8 @@ const ViewJob = () => {
         console.log(res);
         Cookies.remove('FN');
         Cookies.remove('LN');
+        Cookies.remove('myJobs');
+        Cookies.remove('allJobs');
         nav("/");
     })
     .catch((err) => {
@@ -57,11 +63,32 @@ const ViewJob = () => {
 }
 
 
-  
-  const addListFromView = (props) => {
-      let dashboardRef = new Dashboard();
-      dashboardRef.addList(props);
-  }
+  function addList(props) {
+        let cookieMyList = Cookies.get('myJobs');
+        console.log(cookieMyList)
+        if (cookieMyList === undefined) {
+          newList.push(props)
+          let allJobsString = JSON.stringify(newList);
+          Cookies.set('myJobs', allJobsString);
+        }else{
+          let parseCookieMyList = JSON.parse(cookieMyList) || [];
+          parseCookieMyList.push(props);
+          console.log(parseCookieMyList)
+          let allMyJobsString = JSON.stringify(parseCookieMyList);
+          Cookies.set('myJobs', allMyJobsString);
+          //
+          /*newAllJobs = Cookies.get('allJobs');
+          setAllJobsList((JSON.parse(newAllJobs) || []))
+          let index = allJobsList.findIndex(one => one._id === props._id);
+          console.log(index)
+          allJobsList.splice(index, 1);
+          let allJobsString = JSON.stringify(allJobsList);
+          Cookies.set('allJobs', allJobsString);
+          let newAllJobs = Cookies.get('allJobs');
+          allJobsList = (JSON.parse(newAllJobs) || []);*/
+        }
+    
+}
 
 
   return (
@@ -80,7 +107,7 @@ const ViewJob = () => {
         </div>
       </div>
       <div className='addJob-Button'>
-        <Link >Add To My Jobs</Link>
+        <Link onClick={ () => addList(job)} Link to={`/dashboard`} >Add To My Jobs</Link>
       </div>
       
     </form>
