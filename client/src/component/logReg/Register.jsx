@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
 const Register = () => {
-
+    const nav = useNavigate()
     const [error1, setError1] = useState("");
     const [error2, setError2] = useState("");
     const [error3, setError3] = useState("");
@@ -11,7 +11,7 @@ const Register = () => {
     const [error5, setError5] = useState("");
     const [errors, setErrors] = useState([]);
 
-    const nav = useNavigate()
+    
     const [user, setUser] = useState({
         firstName:'',
         lastName:'',
@@ -31,7 +31,6 @@ const Register = () => {
             console.log(res);
             setUser("");
             nav("/");
-            
         })
         .catch((err) => {
             console.log(err);

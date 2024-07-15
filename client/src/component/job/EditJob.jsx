@@ -16,7 +16,10 @@ const EditJob = () => {
   const [error1, setError1] = useState("");
   const [error2, setError2] = useState("");
   const [error3, setError3] = useState("");
+  const [jobs, setJobs] = useState([]);
+  const [index, setIndex] = useState("");
 
+  
 
   useEffect(() =>{
     axios.get('http://localhost:8000/api/AllUsers', {withCredentials: true})
@@ -30,7 +33,7 @@ const EditJob = () => {
 }, []);
 
 const logOut = () => {
-  axios.post('http://localhost:8000/api/logout', {}, {withCredentials: true})
+  axios.post('http://localhost:8000/api/logout', {id}, {withCredentials: true})
   .then((res) => {
       console.log(res);
       Cookies.remove('FN');
@@ -44,20 +47,37 @@ const logOut = () => {
   })
   
 }
+useEffect(() =>{
+  axios.get('http://localhost:8000/api/Jobs')
+  .then((res) => {
+      console.log(res.data);
+      setJobs(res.data);
+  })
+  .catch((err) => {
+      console.log(err);
+      nav('/dashboard');
+  })
+}, []);
 
 useEffect(() => {
   axios.get("http://localhost:8000/api/Jobs/" + id)
   .then((res) => {
       console.log(res.data);
+      console.log(res.data._id);
+      let i = jobs.findIndex(one => one._id === res.data._id);
+      console.log(i)
+      setIndex(i+1)
       setTitle(res.data.title);
       setDescription(res.data.description);
       setLocation(res.data.location);
       setPostedBy(res.data.postedBy);
       setDate(res.data.date);
+      
   })
   .catch((err) => {
       console.log(err)
   })
+  
 }, [id])
 
 const updateHandler = (e) => {

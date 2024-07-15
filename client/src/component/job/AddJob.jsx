@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+
 const AddJob = () => {
   const currentDate = new Date();
   let currentYear = currentDate.getFullYear();
@@ -34,6 +35,7 @@ const AddJob = () => {
       axios.get('http://localhost:8000/api/AllUsers', {withCredentials: true})
       .then((res) => {
           setAllUsers(res.data);
+
       })
       .catch((err) => {
           console.log(err);
@@ -103,6 +105,7 @@ const submitHandler = (e) => {
     }
   })
 }
+
   return (
     <form onSubmit={ submitHandler } >
       <div className='addNavBar'>
@@ -128,9 +131,11 @@ const submitHandler = (e) => {
           <input className='location-input' type='text-area' onChange={(e) => {setLocation(e.target.value)}} value={location} name='location' />
           <div className='errors'>{error3}</div>
         </div>
+        
         <div className='submit'>
             <button className='login-button' type='submit'>Submit</button>
         </div>
+        <div id="map"></div>
       </div>
     </form>
     
